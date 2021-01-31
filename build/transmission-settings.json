@@ -1,0 +1,14 @@
+{
+"rpc-whitelist": "192.168.*.* 127.0.0.1",
+"rpc-whitelist-enabled": true,
+"speed-limit-down": 1250,
+"speed-limit-down-enabled": true,
+"speed-limit-up": 0,
+"speed-limit-up-enabled": true,
+"download-queue-size": 10,
+"download-dir": "/downloads",
+"incomplete-dir": "/in-progress",
+"incomplete-dir-enabled": true,
+"ratio-limit": 0,
+"ratio-limit-enabled": true
+}
