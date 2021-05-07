@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: downloader-config
+data:
+  user.txt: |
+    {{ .Values.vpn.username }}
+    {{ .Values.vpn.password }}
+
+  settings.json: |
+    {
+    "rpc-host-whitelist-enabled": {{ .Values.transmission.rpc.whitelistHost.enabled }},
+    "rpc-host-whitelist": "{{ .Values.transmission.rpc.whitelistHost.dnsNames }}",
+    "rpc-whitelist": "127.0.0.1 {{ .Values.transmission.rpc.whitelistSubnet }}",
+    "rpc-whitelist-enabled": true,
+    "peer-limit-global": {{ .Values.transmission.peer.limit.global }},
+    "peer-limit-per-torrent": {{ .Values.transmission.peer.limit.perTorrent }},
+    "alt-speed-down": {{ .Values.transmission.alt.speed.down }},
+    "alt-speed-up": {{ .Values.transmission.alt.speed.up }},
+    "speed-limit-down": {{ .Values.transmission.speed.limit.down }},
+    "speed-limit-down-enabled": true,
+    "speed-limit-up": {{ .Values.transmission.speed.limit.up }},
+    "speed-limit-up-enabled": true,
+    "download-queue-size": {{ .Values.transmission.download.queueSize }},
+    "download-dir": "{{ .Values.transmission.download.directory }}",
+    "ratio-limit": {{ .Values.transmission.ratio.limit }},
+    "ratio-limit-enabled": true
+    }
