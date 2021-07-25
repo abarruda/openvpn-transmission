@@ -55,7 +55,9 @@ resources:
     cpu: "2"
     memory: "128Mi"
 
-# image:
+image:
+  repo: openvpn-transmission
+  tag: latest
 #   repository: nginx
 #   pullPolicy: IfNotPresent
 

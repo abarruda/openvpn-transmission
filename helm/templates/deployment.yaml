@@ -38,7 +38,7 @@ spec:
 
       containers:
         - name: downloader
-          image: openvpn-transmission:latest
+          image: {{ .Values.image.repo }}:{{ .Values.image.tag }}
           imagePullPolicy: IfNotPresent
 
           resources:
