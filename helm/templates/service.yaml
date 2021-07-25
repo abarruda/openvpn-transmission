@@ -1,0 +1,18 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: test-downloader-service
+
+spec:
+  selector:
+    app: openvpn-transmission
+
+  type: LoadBalancer
+  externalTrafficPolicy: Local
+  loadBalancerIP: {{ .Values.service.ip }}
+
+  ports:
+    - name: http
+      port: {{ .Values.service.port }}
+      targetPort: transmission-ui
+      protocol: TCP

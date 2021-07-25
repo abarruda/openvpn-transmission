@@ -1,0 +1,17 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pv-videos
+  labels:
+spec:
+  storageClassName: manual
+  claimRef:
+    namespace: default
+    name: pvc-videos
+  capacity:
+    storage: {{ .Values.storage.download.size }}
+  accessModes:
+    - ReadWriteOnce
+  nfs:
+    path: {{ .Values.storage.download.path }}
+    server: {{ .Values.storage.download.server }}

@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: downloader
+  labels:
+    app: openvpn-transmission
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: openvpn-transmission
+  template:
+    metadata:
+      labels:
+        app: openvpn-transmission
+    spec:
+
+      dnsConfig:
+        nameservers:
+          {{- range .Values.dns.nameservers }}
+          - {{ . }}
+          {{- end }}
+
+      # restartPolicy: Never
+
+      volumes:
+      - name: downloader-config
+        configMap:
+          name: downloader-config
+
+      - name: transmission-data
+        persistentVolumeClaim:
+          claimName: pvc-transmission-data
+
+      - name: nfs-downloads
+        persistentVolumeClaim:
+          claimName: pvc-videos
+
+      containers:
+        - name: downloader
+          image: {{ .Values.image.repo }}:{{ .Values.image.tag }}
+          imagePullPolicy: IfNotPresent
+
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+            
+          securityContext:
+            capabilities:
+              add: 
+                - NET_ADMIN
+
+          volumeMounts:
+            - name: downloader-config
+              mountPath: /etc/openvpn/user.txt
+              subPath: user.txt
+
+            - name: downloader-config
+              mountPath: /etc/transmission/settings.json
+              subPath: settings.json
+
+            - name: transmission-data
+              mountPath: /etc/transmission
+
+            - name: nfs-downloads
+              mountPath: /downloads
+
+          env:
+            - name: VPN_PROTO
+              value: {{ .Values.vpn.protocol }}
+            - name: VPN_SERVER
+              value: {{ .Values.vpn.server }}
+
+          ports:
+            - name: transmission-ui
+              containerPort: 9091
+              protocol: TCP
+
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - ifconfig | grep tun0
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 20
+
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - ping -c 2 google.com
+            initialDelaySeconds: 30
+            periodSeconds: 30
+
+      nodeSelector:
+        kubernetes.io/hostname: rpi-cluster-node-3
