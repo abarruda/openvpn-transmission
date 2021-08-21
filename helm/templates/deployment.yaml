@@ -94,5 +94,15 @@ spec:
             initialDelaySeconds: 30
             periodSeconds: 30
 
+      {{- with .Values.nodeSelector }}
       nodeSelector:
-        kubernetes.io/hostname: rpi-cluster-node-3
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
