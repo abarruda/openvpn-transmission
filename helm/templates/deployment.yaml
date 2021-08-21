@@ -29,12 +29,20 @@ spec:
           name: downloader-config
 
       - name: transmission-data
+      {{- if .Values.persistentVolume.enabled }}
         persistentVolumeClaim:
           claimName: pvc-transmission-data
+      {{- else }}
+        emptyDir: {}
+      {{- end }}
 
       - name: nfs-downloads
+      {{- if .Values.persistentVolume.enabled }}
         persistentVolumeClaim:
           claimName: pvc-videos
+      {{- else }}
+        emptyDir: {}
+      {{- end }}
 
       containers:
         - name: downloader
