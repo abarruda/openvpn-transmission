@@ -45,6 +45,7 @@ flexget:
   enabled: false
   image: flexget:v3.1.135
   webPassword: test123456test
+  configFile: config/flexget-config.yml
   resources:
     requests:
       memory: "64Mi"

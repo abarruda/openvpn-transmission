@@ -37,6 +37,8 @@ Flexget is used to automate the downloading of files based on RSS feeds.  It mus
 
 `flexget.enabled` - `true` to enable the Flexget sidecar container
 
+`flexget.configFile` - path to the flexget configuration file, relative to the [`helm/`](helm/) directory.
+
 ### Storage configurations
 
 `storage.data.transmission.persistentVolume.enabled` - `true` if transmission state data should be retained

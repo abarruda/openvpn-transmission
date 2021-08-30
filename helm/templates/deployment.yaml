@@ -131,7 +131,7 @@ spec:
           {{- end }}
             - name: flexget-config
               mountPath: /root/.flexget/config.yml
-              subPath: flexget-config.yml
+              subPath: config.yml
           ports:
             - name: flexget-ui
               containerPort: 5050
