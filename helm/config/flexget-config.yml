@@ -1,0 +1,17 @@
+web_server: no
+schedules:
+  - tasks: [music]
+    interval:
+      minutes: 5
+tasks:
+
+  music:
+    rss: http://bt.etree.org/rss/index.xml
+    series: 
+      - Phish:
+          set:
+            path: /downloads/flexget
+
+    transmission:
+      host: localhost
+      port: 9091
