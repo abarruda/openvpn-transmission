@@ -1,18 +1,25 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: test-downloader-service
+  name: {{ .Release.Name }}-downloader
 
 spec:
   selector:
-    app: openvpn-transmission
+    app: {{ .Release.Name }}-downloader
 
   type: LoadBalancer
   externalTrafficPolicy: Local
   loadBalancerIP: {{ .Values.service.ip }}
 
   ports:
-    - name: http
-      port: {{ .Values.service.port }}
+    - name: http-transmission-ui
+      port: {{ .Values.service.transmissionPort }}
       targetPort: transmission-ui
       protocol: TCP
+
+    {{- if .Values.flexget.enabled }}
+    - name: http-flexget-ui
+      port: {{ .Values.service.flexgetPort }}
+      targetPort: flexget-ui
+      protocol: TCP
+    {{- end }}

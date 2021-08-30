@@ -1,11 +1,23 @@
 # Default values for openvpn-transmission.
 
+image: openvpn-transmission:latest
+
+tz: America/Los_Angeles
+
 vpn:
   username:
   password:
   protocol: UDP
   server: USA-LOS.ANGELES
+
 transmission:
+  resources:
+    requests:
+      cpu: "1"
+      memory: "32Mi"
+    limits:
+      cpu: "1"
+      memory: "128Mi"
   rpc:
     whitelistSubnet:
     whitelistHost:
@@ -23,43 +35,51 @@ transmission:
     limit:
       down: 5000
       up: 0
-  download:
+  downloads:
     queueSize: 10
     directory: /downloads
   ratio:
     limit: 0
+
+flexget:
+  enabled: false
+  image: flexget:v3.1.135
+  webPassword: test123456test
+  resources:
+    requests:
+      memory: "64Mi"
+    limits:
+      cpu: "1"
+      memory: "96Mi"
 
 dns:
   nameservers:
     - 1.1.1.1
 
 storage:
-  persistentVolume:
-    enabled: true
-  storageClassName: manual
-  download:
-    path:
-    server: 
-    size: 1Mi
+  storageClassName: 
+
+  data:
+    transmission:
+      persistentVolume:
+        enabled: false
+        storageSize: 1Gi
+    flexget:
+      persistentVolume:
+        enabled: false
+        storageSize: 1Gi
+
+  downloads:
+    enabled: false
+    storageSize: 10Gi
+    volume: {}
 
 service:
   ip:
-  port: 80
-
+  transmissionPort: 80
+  flexgetPort: 5050
 
 replicaCount: 1
-
-resources:
-  requests:
-    cpu: "1"
-    memory: "64Mi"
-  limits:
-    cpu: "2"
-    memory: "128Mi"
-
-image:
-  repo: openvpn-transmission
-  tag: latest
 
 nodeSelector: {}
 

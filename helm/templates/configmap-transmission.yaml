@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: downloader-config
+  name: {{ .Release.Name }}-downloader-config
 data:
   user.txt: |
     {{ .Values.vpn.username }}
@@ -21,8 +21,8 @@ data:
     "speed-limit-down-enabled": true,
     "speed-limit-up": {{ .Values.transmission.speed.limit.up }},
     "speed-limit-up-enabled": true,
-    "download-queue-size": {{ .Values.transmission.download.queueSize }},
-    "download-dir": "{{ .Values.transmission.download.directory }}",
+    "download-queue-size": {{ .Values.transmission.downloads.queueSize }},
+    "download-dir": "{{ .Values.transmission.downloads.directory }}",
     "ratio-limit": {{ .Values.transmission.ratio.limit }},
     "ratio-limit-enabled": true
     }

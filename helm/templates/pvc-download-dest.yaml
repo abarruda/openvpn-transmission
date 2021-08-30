@@ -1,13 +1,13 @@
-{{- if .Values.storage.persistentVolume.enabled -}}
+{{- if .Values.storage.downloads.enabled -}}
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: pvc-videos
+  name: {{ .Release.Name }}-pvc-downloads
 spec:
-  storageClassName: manual
+  storageClassName: existing-pv
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.storage.download.size }}
+      storage: 1Gi
 {{- end -}}

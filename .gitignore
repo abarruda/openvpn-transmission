@@ -2,3 +2,6 @@ run.sh
 sync.sh
 */user.txt
 .DS_Store
+helm/config/*
+run/run-k3d-wrapper.sh
+run/run-rpi-cluster.sh
