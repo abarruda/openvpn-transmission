@@ -4,5 +4,7 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-flexget-config
 data:
-  {{ (.Files.Glob "{{config/flexget-config.yml}}").AsConfig | nindent 2}}
+  config.yml: |-
+  {{- $configFile := printf .Values.flexget.configFile }}
+  {{ (.Files.Get $configFile) | nindent 4 }}
 {{- end }}
