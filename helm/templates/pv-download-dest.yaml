@@ -1,17 +1,20 @@
+{{- if .Values.storage.downloads.enabled -}}
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: pv-videos
+  name: {{ .Release.Name }}-pv-downloads
   labels:
 spec:
-  storageClassName: manual
+  storageClassName: existing-pv
   claimRef:
-    namespace: default
-    name: pvc-videos
+    namespace: {{ .Release.Namespace }}
+    name: {{ .Release.Name }}-pvc-downloads
   capacity:
-    storage: {{ .Values.storage.download.size }}
+    storage: {{ .Values.storage.downloads.storageSize }}
   accessModes:
     - ReadWriteOnce
-  nfs:
-    path: {{ .Values.storage.download.path }}
-    server: {{ .Values.storage.download.server }}
+
+  {{- with .Values.storage.downloads.volume }}
+    {{- toYaml . | nindent 2 }}
+  {{- end }}
+{{- end -}}

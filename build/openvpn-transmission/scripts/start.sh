@@ -1,15 +1,11 @@
 #!/bin/bash
 
-set -e #x
-
-touch /var/log/openvpn.log /var/log/transmission.log
+set -e
 
 VPN_PROTO=${VPN_PROTO:-UDP}
 VPN_SERVER=${VPN_SERVER:-Romania}
 
-echo "Original external IP: "
-curl http://ipecho.net/plain
-echo ""
+touch /var/log/openvpn.log /var/log/transmission.log
 
 cd /etc/openvpn/
 
@@ -35,14 +31,10 @@ openvpn \
   --auth-nocache \
   --auth-user-pass /etc/openvpn/user.txt \
   --management 127.0.0.1 5001 \
+  --connect-retry-max 0 \
   --route-up "/scripts/up.sh $GATEWAY $INTERFACE $VPN_SERVER" \
   --up-delay \
-  --down "/scripts/down.sh" \
+  --down "/scripts/down.sh $GATEWAY $INTERFACE" \
   --mute-replay-warnings &
-
-# while ! tail -n 1 /var/log/openvpn.log | grep "Initialization Sequence Completed" ; do
-#   echo "Tunnel not yet up..."
-#   sleep 1
-# done
 
 tail -f /var/log/openvpn.log /var/log/transmission.log

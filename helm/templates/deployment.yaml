@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: downloader
+  name: {{ .Release.Name }}-downloader
   labels:
-    app: openvpn-transmission
+    app: {{ .Release.Name }}-downloader
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: openvpn-transmission
+      app: {{ .Release.Name }}-downloader
   template:
     metadata:
       labels:
-        app: openvpn-transmission
+        app: {{ .Release.Name }}-downloader
     spec:
 
       dnsConfig:
@@ -21,28 +21,44 @@ spec:
           - {{ . }}
           {{- end }}
 
-      # restartPolicy: Never
-
       volumes:
       - name: downloader-config
         configMap:
-          name: downloader-config
+          name: {{ .Release.Name }}-downloader-config
 
       - name: transmission-data
+      {{- if .Values.storage.data.transmission.persistentVolume.enabled }}
         persistentVolumeClaim:
-          claimName: pvc-transmission-data
+          claimName: {{ .Release.Name }}-pvc-transmission-data
+      {{- else }}
+        emptyDir: {}
+      {{- end }}
 
-      - name: nfs-downloads
+      - name: downloads-destination
+      {{- if .Values.storage.downloads.enabled }}
         persistentVolumeClaim:
-          claimName: pvc-videos
+          claimName: {{ .Release.Name }}-pvc-downloads
+      {{- else }}
+        emptyDir: {}
+      {{- end }}
+
+      - name: flexget-config
+        configMap:
+          name: {{ .Release.Name }}-flexget-config
+
+      {{ if .Values.storage.data.flexget.persistentVolume.enabled }}
+      - name: flexget-data
+        persistentVolumeClaim:
+          claimName: {{ .Release.Name }}-pvc-flexget-data
+      {{ end }}
 
       containers:
-        - name: downloader
-          image: {{ .Values.image.repo }}:{{ .Values.image.tag }}
+        - name: ovpn-transmission
+          image: {{ .Values.image }}
           imagePullPolicy: IfNotPresent
 
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.transmission.resources | nindent 12 }}
             
           securityContext:
             capabilities:
@@ -61,10 +77,12 @@ spec:
             - name: transmission-data
               mountPath: /etc/transmission
 
-            - name: nfs-downloads
-              mountPath: /downloads
+            - name: downloads-destination
+              mountPath: {{ .Values.transmission.downloads.directory }}
 
           env:
+            - name: TZ
+              value: "{{ .Values.tz }}"
             - name: VPN_PROTO
               value: {{ .Values.vpn.protocol }}
             - name: VPN_SERVER
@@ -90,9 +108,47 @@ spec:
               command:
                 - sh
                 - -c
-                - ping -c 2 google.com
+                # - ping -c 2 google.com
+                # TODO: check if flexget is reachable if enabled
+                - ifconfig | grep tun0 && curl localhost:9091
             initialDelaySeconds: 30
-            periodSeconds: 30
+            periodSeconds: 10
 
+        {{ if .Values.flexget.enabled }}
+        - name: flexget
+          image: {{ .Values.flexget.image }}
+          command: ["/bin/sh","-c"]
+          args: ["flexget check && flexget web passwd {{ .Values.flexget.webPassword }} && flexget daemon start"]
+          env:
+            - name: TZ
+              value: "{{ .Values.tz }}"
+            - name: FLEXGET_LOG_LEVEL
+              value: "debug"
+          volumeMounts:
+          {{- if .Values.storage.data.flexget.persistentVolume.enabled }}
+            - name: flexget-data
+              mountPath: /root/.flexget
+          {{- end }}
+            - name: flexget-config
+              mountPath: /root/.flexget/config.yml
+              subPath: flexget-config.yml
+          ports:
+            - name: flexget-ui
+              containerPort: 5050
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.flexget.resources | nindent 12 }}
+        {{- end }}
+
+      {{- with .Values.nodeSelector }}
       nodeSelector:
-        kubernetes.io/hostname: rpi-cluster-node-3
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{ end }}

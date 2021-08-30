@@ -1,12 +1,16 @@
+{{- if .Values.storage.data.transmission.persistentVolume.enabled -}}
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: pvc-transmission-data
+  name: {{ .Release.Name }}-pvc-transmission-data
   annotations:
 spec:
+  {{- if .Values.storage.storageClassName }}
   storageClassName: {{ .Values.storage.storageClassName }}
+  {{- end }}
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
-      storage: 1Gi
+      storage: {{ .Values.storage.data.transmission.persistentVolume.storageSize }}
+{{- end -}}

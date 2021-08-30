@@ -1,0 +1,14 @@
+{{- if .Values.storage.data.flexget.persistentVolume.enabled -}}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-pvc-flexget-data
+  annotations:
+spec:
+  storageClassName: {{ .Values.storage.storageClassName }}
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.storage.data.flexget.persistentVolume.storageSize }}
+{{- end -}}
