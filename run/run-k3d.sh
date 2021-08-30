@@ -2,14 +2,16 @@
 
 set -e
 
+FLEXGET_VERSION="3.1.135"
+
 helm lint $(pwd)/../helm/.
 docker build -t openvpn-transmission:latest ../build/openvpn-transmission/.
 
-echo "Downloading flexget version 3.1.135 from github..."
-wget -qO- https://github.com/Flexget/Flexget/archive/refs/tags/v3.1.135.tar.gz > ../build/flexget/flexget-v3.1.135.tar.gz
+echo "Downloading flexget version v$FLEXGET_VERSION from github..."
+wget -qO- https://github.com/Flexget/Flexget/archive/refs/tags/v${FLEXGET_VERSION}.tar.gz > ../build/flexget/flexget-v${FLEXGET_VERSION}.tar.gz
 echo "Extracting flexget tar..."
-time tar -zxf ../build/flexget/flexget-v3.1.135.tar.gz --directory ../build/flexget
-docker build -t flexget:v3.1.135 ../build/flexget/Flexget-3.1.135/.
+time tar -zxf ../build/flexget/flexget-v${FLEXGET_VERSION}.tar.gz --directory ../build/flexget
+docker build -t flexget:v${FLEXGET_VERSION} ../build/flexget/Flexget-${FLEXGET_VERSION}/.
 echo "Cleaning up flexget source..."
 rm -rf ../build/flexget/*
 
@@ -26,7 +28,7 @@ helm template \
 --set vpn.server=${VPN_SERVER} \
 --set transmission.rpc.whitelistSubnet=192.168\.\*\.\* \
 --set flexget.enabled=true  \
---set flexget.image=flexget:v3.1.135 \
+--set flexget.image=flexget:v${FLEXGET_VERSION} \
 $(pwd)/../helm/.
 
 helm upgrade k3d-test \
@@ -39,7 +41,7 @@ helm upgrade k3d-test \
 --set vpn.server=${VPN_SERVER} \
 --set transmission.rpc.whitelistSubnet=192.168\.\*\.\* \
 --set flexget.enabled=true  \
---set flexget.image=flexget:v3.1.135 \
+--set flexget.image=flexget:v${FLEXGET_VERSION} \
 $(pwd)/../helm/.
 
 kubectl wait --for=condition=available --timeout=600s deployment/k3d-test-downloader 
