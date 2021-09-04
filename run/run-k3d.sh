@@ -27,6 +27,10 @@ helm template \
 --set vpn.password=${VPN_PASSWD} \
 --set vpn.server=${VPN_SERVER} \
 --set transmission.rpc.whitelistSubnet=192.168\.\*\.\* \
+--set storage.extraVolumes.transmission[0].name=extra-volume-movies \
+--set storage.extraVolumes.transmission[0].emptyDir.medium="Memory" \
+--set storage.extraVolumeMounts.transmission[0].name=extra-volume-movies \
+--set storage.extraVolumeMounts.transmission[0].mountPath="/movies" \
 --set flexget.enabled=true  \
 --set flexget.image=flexget:v${FLEXGET_VERSION} \
 $(pwd)/../helm/.
@@ -40,6 +44,10 @@ helm upgrade k3d-test \
 --set vpn.password=${VPN_PASSWD} \
 --set vpn.server=${VPN_SERVER} \
 --set transmission.rpc.whitelistSubnet=192.168\.\*\.\* \
+--set storage.extraVolumes.transmission[0].name=extra-volume-movies \
+--set storage.extraVolumes.transmission[0].emptyDir.medium="Memory" \
+--set storage.extraVolumeMounts.transmission[0].name=extra-volume-movies \
+--set storage.extraVolumeMounts.transmission[0].mountPath="/movies" \
 --set flexget.enabled=true  \
 --set flexget.image=flexget:v${FLEXGET_VERSION} \
 $(pwd)/../helm/.

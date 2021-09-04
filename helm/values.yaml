@@ -75,6 +75,15 @@ storage:
     storageSize: 10Gi
     volume: {}
 
+  extraVolumes:
+    transmission: []
+      # - name: extra-volume-movies
+      #   emptyDir: {}
+  extraVolumeMounts:
+    transmission: []
+      # - name: extra-volume-movies
+      #   mountPath: /movies
+
 service:
   ip:
   transmissionPort: 80
