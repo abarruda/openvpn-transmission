@@ -13,6 +13,10 @@ spec:
     metadata:
       labels:
         app: {{ .Release.Name }}-downloader
+      annotations:
+        # invokes a redeployment if configuration changes
+        {{- $configFile := printf .Values.flexget.configFile }}
+        config: {{ sha256sum (.Files.Get $configFile) }}
     spec:
 
       dnsConfig:
@@ -52,6 +56,10 @@ spec:
           claimName: {{ .Release.Name }}-pvc-flexget-data
       {{ end }}
 
+      {{ if .Values.storage.extraVolumes.transmission }}
+{{ toYaml .Values.storage.extraVolumes.transmission | indent 6 }}
+      {{ end }}
+
       containers:
         - name: ovpn-transmission
           image: {{ .Values.image }}
@@ -79,6 +87,10 @@ spec:
 
             - name: downloads-destination
               mountPath: {{ .Values.transmission.downloads.directory }}
+
+            {{ if .Values.transmission.extraVolumeMounts }}
+{{- toYaml .Values.storage.extraVolumeMounts.transmission | nindent 12 }}
+            {{- end }}
 
           env:
             - name: TZ

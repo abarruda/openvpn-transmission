@@ -64,3 +64,14 @@ spec:
 
 `storage.flexget.persistentVolume.enabled` - `true` if flexget state data should be retained.
 - **Note** - *Flexget seems to store state in DB that prevents another instance from being brought up.  This is problematic if a Pod dies and another attempts to start, or a new version is deployed.  The new Pod will attempt to connect to the database that's in persistent storage and exit as it detects the old instance's state.  This results in a crash loop that cannot be recovered from.  In order to avoid this, persistent storage for Flexget is not recommended.*
+
+### Extra Volumes
+
+Extra volumes can be attached to the transmission container, in order to provide alternate download paths, which can be configured in flexget or chosen upon starting a download.
+```bash
+--set storage.extraVolumes.transmission[0].name=tv-volume \
+--set storage.extraVolumes.transmission[0].nfs.server=192.168.0.5 \
+--set storage.extraVolumes.transmission[0].nfs.path="/volume1/Movies" \
+--set storage.extraVolumeMounts.transmission[0].name=tv-volume \
+--set storage.extraVolumeMounts.transmission[0].mountPath="/movies" \
+```
