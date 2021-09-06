@@ -15,8 +15,10 @@ spec:
         app: {{ .Release.Name }}-downloader
       annotations:
         # invokes a redeployment if configuration changes
-        {{- $configFile := printf .Values.flexget.configFile }}
-        config: {{ sha256sum (.Files.Get $configFile) }}
+        {{- $flexgetConfigFile := printf .Values.flexget.configFile }}
+        flexget-config: {{ sha256sum (.Files.Get $flexgetConfigFile) }}
+        transmission-config: {{ sha256sum (.Values.transmission | toString) }}
+
     spec:
 
       dnsConfig:

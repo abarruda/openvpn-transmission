@@ -21,6 +21,8 @@ data:
     "speed-limit-down-enabled": true,
     "speed-limit-up": {{ .Values.transmission.speed.limit.up }},
     "speed-limit-up-enabled": true,
+    "idle-seeding-limit-enabled": true,
+    "idle-seeding-limit": {{ .Values.transmission.seeding.idleLimit }},
     "download-queue-size": {{ .Values.transmission.downloads.queueSize }},
     "download-dir": "{{ .Values.transmission.downloads.directory }}",
     "ratio-limit": {{ .Values.transmission.ratio.limit }},

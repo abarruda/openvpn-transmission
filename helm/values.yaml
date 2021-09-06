@@ -35,6 +35,8 @@ transmission:
     limit:
       down: 5000
       up: 0
+  seeding:
+    idleLimit: 0
   downloads:
     queueSize: 10
     directory: /downloads
