@@ -15,7 +15,9 @@ spec:
         app: {{ .Release.Name }}-downloader
       annotations:
         # invokes a redeployment if configuration changes
+        {{- $openvpnConfigFile := printf .Values.vpn.configFile }}
         {{- $flexgetConfigFile := printf .Values.flexget.configFile }}
+        openvpn-config: {{ sha256sum (.Files.Get $openvpnConfigFile) }}
         flexget-config: {{ sha256sum (.Files.Get $flexgetConfigFile) }}
         transmission-config: {{ sha256sum (.Values.transmission | toString) }}
 
@@ -28,6 +30,10 @@ spec:
           {{- end }}
 
       volumes:
+      - name: openvpn-config
+        secret:
+          secretName: {{ .Release.Name }}-openvpn-config
+
       - name: downloader-config
         configMap:
           name: {{ .Release.Name }}-downloader-config
@@ -76,7 +82,11 @@ spec:
                 - NET_ADMIN
 
           volumeMounts:
-            - name: downloader-config
+            - name: openvpn-config
+              mountPath: /etc/openvpn/config.ovpn
+              subPath: config.ovpn
+
+            - name: openvpn-config
               mountPath: /etc/openvpn/user.txt
               subPath: user.txt
 
@@ -97,10 +107,6 @@ spec:
           env:
             - name: TZ
               value: "{{ .Values.tz }}"
-            - name: VPN_PROTO
-              value: {{ .Values.vpn.protocol }}
-            - name: VPN_SERVER
-              value: {{ .Values.vpn.server }}
 
           ports:
             - name: transmission-ui
@@ -122,9 +128,8 @@ spec:
               command:
                 - sh
                 - -c
-                # - ping -c 2 google.com
                 # TODO: check if flexget is reachable if enabled
-                - ifconfig | grep tun0 && curl localhost:9091
+                - ifconfig | grep tun0 && curl localhost:9091 && ping -c 2 google.com
             initialDelaySeconds: 30
             periodSeconds: 10
 

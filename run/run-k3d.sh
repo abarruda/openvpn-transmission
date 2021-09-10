@@ -25,7 +25,6 @@ helm template \
 --set storage.downloads.enabled=false \
 --set vpn.username=${VPN_USER} \
 --set vpn.password=${VPN_PASSWD} \
---set vpn.server=${VPN_SERVER} \
 --set transmission.rpc.whitelistSubnet=192.168\.\*\.\* \
 --set storage.extraVolumes.transmission[0].name=extra-volume-movies \
 --set storage.extraVolumes.transmission[0].emptyDir.medium="Memory" \
@@ -42,7 +41,6 @@ helm upgrade k3d-test \
 --set storage.downloads.enabled=false \
 --set vpn.username=${VPN_USER} \
 --set vpn.password=${VPN_PASSWD} \
---set vpn.server=${VPN_SERVER} \
 --set transmission.rpc.whitelistSubnet=192.168\.\*\.\* \
 --set storage.extraVolumes.transmission[0].name=extra-volume-movies \
 --set storage.extraVolumes.transmission[0].emptyDir.medium="Memory" \

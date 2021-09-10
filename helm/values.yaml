@@ -7,8 +7,7 @@ tz: America/Los_Angeles
 vpn:
   username:
   password:
-  protocol: UDP
-  server: USA-LOS.ANGELES
+  configFile: config/config.ovpn
 
 transmission:
   resources:

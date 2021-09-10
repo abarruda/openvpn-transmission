@@ -4,9 +4,7 @@ set -e
 
 GATEWAY=${1}
 INTERFACE=${2}
-VPN_SERVER=${3}
-echo "GATEWAY: ${GATEWAY}"
-echo "INTERFACE: ${INTERFACE}"
+echo "GATEWAY: ${GATEWAY}, INTERFACE: ${INTERFACE}"
 
 echo "`date` TUNNEL UP!"
 

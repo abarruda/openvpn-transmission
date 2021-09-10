@@ -1,36 +1,39 @@
 # openvpn-transmission
 
-Secure download client designed for  Torguard VPN.
+Secure download client designed for use with a VPN provider.
 
 ## Build
 
 ```bash
 cd build/openvpn-transmission
-docker build -t openvpn-transmission .
+docker build -t openvpn-transmission:v1.1.0 --platform linux/arm/v7 .
 ```
 
 ## Run/Deploy
 
-A simple k3d deployment is included in this repo.  More complex deployments can be crafted using the sample deployment as a guide.  Specify VPN credentials/configuration and execute the script to create a cluster and perform a deployment with both transmission and flexget configured:
+A simple k3d deployment is included in this repo.  More complex deployments can be crafted using the sample deployment as a guide.  
+
+Reference an existing openvpn client configuration (via the `vpn.configFile` Helm chart override) or place into `helm/config/config.ovpn` and gather user credentials. Execute the script to create a cluster and perform a deployment with both transmission and flexget configured:
 
 ```bash
+$ touch helm/config/config.openvpn
+... # place openvpn connection configuration in file above
 $ cd run
 $ VPN_USER=me@user.com \
 VPN_PASSWD=vPnP@S$wD \
-VPN_SERVER=USA-LOS.ANGELES \
 ./run-k3d.sh
 ```
 
 ## Configuration
 
-### Credentials
-VPN credentials will be necessary in order to connect to the TorGuard VPN servers.
+### VPN Configuration and Credentials
+VPN credentials will be necessary in order to connect to VPN servers.
 
-`vpn.username` - TorGuard username
+`vpn.configFile` - VPN client configuration to use (default: `helm/config/config.ovpn`)
 
-`vpn.password` - TorGuard password
+`vpn.username` - VPN username
 
-`vpn.server`   - TorGuard VPN server configuration
+`vpn.password` - VPN password
 
 ### Flexget
 Flexget is used to automate the downloading of files based on RSS feeds.  It must be enabled and its configuration must be supplied in [`helm/config/flexget-config.yml`](helm/config/flexget-config.yml)
