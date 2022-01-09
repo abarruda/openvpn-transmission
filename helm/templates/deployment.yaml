@@ -123,15 +123,17 @@ spec:
             periodSeconds: 5
             failureThreshold: 20
 
-          livenessProbe:
-            exec:
-              command:
-                - sh
-                - -c
-                # TODO: check if flexget is reachable if enabled
-                - ifconfig | grep tun0 && curl localhost:9091 && ping -c 2 google.com
-            initialDelaySeconds: 30
-            periodSeconds: 10
+          # livenessProbe:
+          #   exec:
+          #     command:
+          #       - sh
+          #       - -c
+          #       # TODO: check if flexget is reachable if enabled
+          #       - ifconfig | grep tun0 && curl -I localhost:9091 && curl -I http://google.com
+          #   initialDelaySeconds: 30
+          #   periodSeconds: 10
+          #   timeoutSeconds: 2
+          #   failureThreshold: 5
 
         {{ if .Values.flexget.enabled }}
         - name: flexget
