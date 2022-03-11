@@ -78,3 +78,21 @@ Extra volumes can be attached to the transmission container, in order to provide
 --set storage.extraVolumeMounts.transmission[0].name=tv-volume \
 --set storage.extraVolumeMounts.transmission[0].mountPath="/movies" \
 ```
+
+### Auth
+
+
+`transmission.rpc.authenticationRequired` - `true` if authentication should be enabled
+
+`transmission.rpc.username` - User name to access transmission
+
+`transmission.rpc.password` - SHA1 of password, prefixed by `{`
+
+```bash
+echo -n "myPassword1234" | openssl sha1
+95b7c59498cac4afdb334b818e82d8eee0a6aee4
+
+...
+
+--set transmission.rpc.password="\\{95b7c59498cac4afdb334b818e82d8eee0a6aee4"
+```

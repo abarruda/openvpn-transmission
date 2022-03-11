@@ -7,9 +7,13 @@ spec:
   selector:
     app: {{ .Release.Name }}-downloader
 
+  {{ if .Values.service.ip }}
   type: LoadBalancer
   externalTrafficPolicy: Local
   loadBalancerIP: {{ .Values.service.ip }}
+  {{ else }}
+  type: ClusterIP
+  {{ end }}
 
   ports:
     - name: http-transmission-ui

@@ -9,6 +9,9 @@ data:
 
   settings.json: |
     {
+    "rpc-authentication-required": {{ .Values.transmission.rpc.authenticationRequired }},
+    "rpc-username": "{{ .Values.transmission.rpc.username }}",
+    "rpc-password": "{{ .Values.transmission.rpc.password }}",
     "rpc-host-whitelist-enabled": {{ .Values.transmission.rpc.whitelistHost.enabled }},
     "rpc-host-whitelist": "{{ .Values.transmission.rpc.whitelistHost.dnsNames }}",
     "rpc-whitelist": "127.0.0.1 {{ .Values.transmission.rpc.whitelistSubnet }}",

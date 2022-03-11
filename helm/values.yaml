@@ -18,6 +18,9 @@ transmission:
       cpu: "1"
       memory: "128Mi"
   rpc:
+    authenticationRequired: false
+    username: "admin"
+    password: ""
     whitelistSubnet:
     whitelistHost:
       enabled: true
